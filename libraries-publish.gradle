@@ -1,0 +1,24 @@
+/**
+ * Define where to publish the JAR artifacts of this project
+ */
+apply plugin: 'maven-publish'
+
+// Set the group name so the client project can be correctly imported using Gradle composite build
+group 'eu.fbk.trec'
+
+task sourceJar(type: Jar) {
+	from sourceSets.main.allJava
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			artifact sourceJar {
+				classifier "sources"
+			}
+			groupId 'eu.fbk.trec'
+			version = (System.getenv('CI_COMMIT_TAG') ? System.getenv('CI_COMMIT_TAG').replace('v', '') : project.getVersion())	// Use the Git tag as the JAR version, or fallback to project version
+		}
+	}
+}

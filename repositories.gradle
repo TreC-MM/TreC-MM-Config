@@ -1,0 +1,19 @@
+allprojects {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+
+	/**
+	 * Do NOT cache the SNAPSHOT libraries for too long
+	 * Make sure to have always the latest version.
+	 */
+	//noinspection GroovyAssignabilityCheck
+	configurations.all {
+		resolutionStrategy {
+			cacheChangingModulesFor 60, 'seconds'
+			cacheDynamicVersionsFor 60, 'seconds'
+			preferProjectModules()
+		}
+	}
+}
