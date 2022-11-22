@@ -1,0 +1,50 @@
+/*
+* This configuration is applied to the RabbitMQ client subproject.
+* It applies the libraries-publish plugin from the libraries-publish.gradle configuration
+*/
+
+subprojects { project ->
+	if (project.name.contains("client-rabbitmq")) {
+
+		apply plugin: 'java-library'
+		apply plugin: "org.springframework.boot"
+		apply plugin: "io.spring.dependency-management"
+
+		// Check if the java source files are present, otherwise does not apply the publish configuration
+		def srcDir = project.sourceSets.main.java.srcDirs.first()
+		if (srcDir.exists()) {
+			// Apply the publish configuration to the client subproject
+			apply from: 'https://raw.githubusercontent.com/TreC-MM/TreC-MM-Config/main/libraries-publish.gradle'
+		}
+
+
+		ext {
+			lombok_version = "1.18.+"
+			trec_server_starter_version = "+"
+		}
+
+		// Apply minimum dependencies required by the project
+		dependencies {
+
+			// Spring configuration
+			compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+			compileOnly "org.springframework.boot:spring-boot-starter-json" // Jackson for serialization
+			compileOnly "org.springframework.boot:spring-boot-starter-amqp" // RabbitMQ
+
+			// Data Validation
+			compileOnly "javax.annotation:javax.annotation-api"
+			compileOnly "javax.validation:validation-api"
+
+			// Lombok
+			compileOnly "org.projectlombok:lombok:$lombok_version"
+			annotationProcessor "org.projectlombok:lombok:$lombok_version"
+
+			// TreC
+			compileOnly "eu.fbk.trec:lib-server-starter:$trec_server_starter_version"
+
+			// Test
+			testRuntimeOnly "org.springframework.boot:spring-boot-starter-amqp" // RabbitMQ
+
+		}
+	}
+}
